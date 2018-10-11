@@ -46,6 +46,8 @@ db.run(`CREATE TABLE if not exists toDoList (
   });
 });
 
+//SELECT name FROM sqlite_master WHERE type = "table"
+
 // routes ======================================================================
 let postGET = function() {
   db.all(`SELECT toDoid, text FROM toDoList ORDER BY toDoid`, [], (err, rows) => {
@@ -96,23 +98,6 @@ db.all(`SELECT toDoid, text FROM toDoList ORDER BY toDoid`, [], (err, rows) => {
     // create todo and send back all todos after creation
     app.post('/api/todos', function(req, res) {
 
-        // create a todo, information comes from AJAX request from Angular
-/*        Todo.create({
-            text : req.body.text,
-            done : false
-        }, function(err, todo) {
-            if (err)
-                res.send(err);
-
-            // get and return all the todos after you create another
-            Todo.find(function(err, todos) {
-                if (err)
-                    res.send(err)
-                res.json(todos);
-            });
-            */
-
-
             let newToDo = req.body.text;
             db.run(`INSERT INTO toDoList(text) VALUES('${newToDo}')`, function(err, data) {
               if (err) { return console.log("Could not add db entry: " + err.message)};
@@ -133,20 +118,7 @@ db.all(`SELECT toDoid, text FROM toDoList ORDER BY toDoid`, [], (err, rows) => {
 
     // delete a todo
     app.delete('/api/todos/:todo_id', function(req, res) {
-    /*    Todo.remove({
-            _id : req.params.todo_id
-        }, function(err, todo) {
-            if (err)
-                res.send(err);
 
-            // get and return all the todos after you create another
-            Todo.find(function(err, todos) {
-                if (err)
-                    res.send(err)
-                res.json(todos);
-            });
-        });
-        */
         db.run(`DELETE FROM toDoList WHERE toDoid = ${req.params.todo_id}`, function(err) {
           if (err) { return console.log("Could not remove db entry: " + err.message)};
           console.log(`A row has been removed from toDoList with rowid ${this.lastID}.`);
@@ -163,20 +135,7 @@ db.all(`SELECT toDoid, text FROM toDoList ORDER BY toDoid`, [], (err, rows) => {
     });
 
     app.delete('/api/todos/all', function(req, res) {
-    /*    Todo.remove({
-            _id : req.params.todo_id
-        }, function(err, todo) {
-            if (err)
-                res.send(err);
 
-            // get and return all the todos after you create another
-            Todo.find(function(err, todos) {
-                if (err)
-                    res.send(err)
-                res.json(todos);
-            });
-        });
-        */
         db.run(`DELETE FROM toDoList WHERE *`, function(err) {
           if (err) { return console.log("Could not remove db entry: " + err.message)};
           console.log(`A row has been removed from toDoList with rowid ${this.lastID}.`);

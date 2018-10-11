@@ -1,0 +1,7 @@
+
+node_modules
+*.ppk
+*.pem
+resources/sshkeys.txt
+resources/MonoDB Pass.txt
+resources/AMI ID.txt

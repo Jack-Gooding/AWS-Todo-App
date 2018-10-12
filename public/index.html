@@ -7,20 +7,18 @@
     <!-- META -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Optimize mobile viewport -->
-    <link rel="icon" type="image/png" href="./images/favicon.ico"/>
+    <link rel="icon" type="image/png" href="/images/favicon.ico"/>
 
     <title>To Do App</title>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- SCROLLS -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"><!-- load bootstrap -->
-    <style>
-        html                    { overflow-y:scroll; }
-        body                    { padding-top:50px; }
-        #todo-list              { margin-bottom:30px; }
-    </style>
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"><!-- load fontawesome -->
+    <link rel="stylesheet/less" type="text/css" href="./css/index.less"><!-- less stylesheet -->
     <!-- SPELLS -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><!-- load jquery -->
+    <script src="./js/less.min.js"></script><!-- load less -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> <!-- Bootstrap Javascript -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script><!-- load jquery -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
     <script src="core.js"></script>
 
@@ -30,23 +28,43 @@
     <div class="container">
 
         <!-- HEADER AND TODO COUNT -->
-        <div class="jumbotron text-center">
-            <h1>I'm a Todo-aholic <span class="label label-info">{{ todos.length }}</span></h1>
+        <div class="row jumbotron text-center" style="margin: 0 -15px 0 -15px;">
+            <h1>To do: <span class="label label-info">{{ todos.length }}</span></h1>
         </div>
+        <div class="row">
 
-        <!-- TODO LIST -->
-        <div id="todo-list" class="row">
+        <ul class="col nav nav-pills nav-justified" style="display: inline-block;">
+          <li class="active"><a data-toggle="pill" ng-href="#{{tables[0].tableName}}">{{tables[0].tableName}} <span class="label label-info">{{tables[0].toDo.length}}</span></a></li>
+          <li ng-repeat="table in tables.slice(1,tables.length)"><a data-toggle="pill" ng-href="#{{table.tableName}}">{{table.tableName}}   <span class="label label-info">{{table.toDo.length}}</span></a></li>
+          <li class="disabled" ng-click="createTable()"><a href="#menu3">+</a></li>
+
+        </ul>
+        <div class="tab-content">
+          <div id="{{tables[0].tableName}}" class="tab-pane fade in active">
+            <h3>{{tables[0].tableName}}</h3>
+            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+          </div>
+          <div id="{{table.tableName}}" class="tab-pane fade" ng-repeat="table in tables.slice(1,tables.length)">
+            <h3>{{table.tableName}}</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
+      </div>
+        <div id="todo-table" class="row">
             <div class="col-sm-4 col-sm-offset-4">
-
-                <!-- LOOP OVER THE TODOS IN $scope.todos -->
-                <div class="checkbox" ng-repeat="todo in todos">
-                    {{$index + 1}}
-                    <label>
-                      <input type="checkbox" ng-click="deleteTodo(todo.toDoid)">
-                    </label>
-                    {{todo.text}}
-                </div>
-
+              <table>
+                <th>Completed?</th>
+                <th>Todo</th>
+                <th>Date Added</th>
+                <th>Days Left</th>
+                <th>Delete?</th>
+                <tr ng-repeat="todo in todos">
+                  <td><input type="checkbox"/></td>
+                  <td>{{todo.text}}</td>
+                  <td>{{todo.date_text}}</td>
+                  <td>{{todo.date_needed}}</td>
+                  <td><i class="fas fa-trash-alt" ng-click="deleteTodo(todo.toDoid)"></i></td>
+                </tr>
+              </table>
             </div>
         </div>
 

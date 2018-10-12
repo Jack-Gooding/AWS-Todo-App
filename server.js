@@ -3,7 +3,6 @@
     // set up ========================
     var express  = require('express');
     var app      = express();                               // create our app w/ express
-    //var mongoose = require('mongoose');                     // mongoose for mongodb
     var morgan = require('morgan');             // log requests to the console (express4)
     var bodyParser = require('body-parser');    // pull information from HTML POST (express4)
     var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
@@ -11,7 +10,6 @@
     var sqlite3 = require('sqlite3').verbose();
 
     // configuration =================
-    //mongoose.connect('mongodb://127.0.0.1/node-test');     // connect to mongoDB database on modulus.io
 
     app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
     app.use(morgan('dev'));                                         // log every request to the console
@@ -21,12 +19,7 @@
     app.use(methodOverride());
 
 
-    // define model =================
-/*    var Todo = mongoose.model('Todo', {
-        text : String
-    });
-*/
-
+let db_all = [];
 
 let db = new sqlite3.Database('./public/database/toDo.db', (err) => {
 
@@ -38,53 +31,68 @@ let db = new sqlite3.Database('./public/database/toDo.db', (err) => {
 });
 
 db.serialize(() => {
-db.run(`CREATE TABLE if not exists toDoList (
+db.run(`CREATE TABLE if not exists generalToDo (
   toDoid integer PRIMARY KEY,
-  text TEXT NOT NULL)`,
+  text TEXT NOT NULL,
+  date_text TEXT NOT NULL
+  )`,
   function(err) {
     if (err) { return console.log("Incorrect Creation: "+err) };
   });
 });
 
-//SELECT name FROM sqlite_master WHERE type = "table"
+
+let getTableData = function(options, callBack) {
+  //SELECT name FROM sqlite_master WHERE type = "table"
+  db.each("SELECT name FROM sqlite_master WHERE type='table'", function (err, table) {
+    if (err) {
+      console.log(err);
+    }
+    db_all.push(table);
+  // Execute the callback function and pass the parameters to it
+}, function(err, count) {
+  let dbTableList = [];
+  db_all.forEach(function(element, index) {
+    db_all[index].todo = [];
+    dbTableList.push(element.name);
+      db.all(`SELECT toDoid, text, date_text FROM ${element.name} ORDER BY toDoid`, [], (err, rows) => {
+        if (err){
+          throw err;
+        }
+        for (let row = 0; row < rows.length; row++) {
+          console.log(rows[row]);
+          db_all[index].todo[row] = rows[row];
+        }
+        console.log(db_all);
+      });
+  });
+  console.log("Existing Table List:- "+dbTableList.join(", "));
+});
+};
+
+getTableData();
 
 // routes ======================================================================
-let postGET = function() {
-  db.all(`SELECT toDoid, text FROM toDoList ORDER BY toDoid`, [], (err, rows) => {
-    if (err){
-      res.send(err);
-      throw err;
-    }
-    console.log(rows);
-    res.json(rows);
-  });
-}
+
     // api ---------------------------------------------------------------------
     // get all todos
-    app.get('/api/todos', function(req, res) {
 
-        // use mongoose to get all todos in the database
-/*        Todo.find(function(err, todos) {
-
-            // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-            if (err)
-                res.send(err)
-
-            res.json(todos); // return all todos in JSON format
-        });
-
-db.each(`SELECT text FROM toDoList ORDER BY toDoid DESC`, function(err, row, postGET) {
-  if (err){
-    res.send(err);
-    throw err;
-  }
-  //row = [row];
-  toDo.push(row);
-  console.log(row);
-  console.log(toDo);
+app.post('/api/create', function(req, res) {
+  console.log(req.body.tableName)
+  let newTable = req.body.tableName;
+  db.run(`CREATE TABLE if not exists ${newTable} (
+    toDoid integer PRIMARY KEY,
+    text TEXT NOT NULL,
+    date_text TEXT NOT NULL
+    )`,
+    function(err) {
+      if (err) { return console.log("Incorrect Creation: "+err) };
+      console.log(`Created table with name ${newTable}`)
+    });
 });
-*/
-db.all(`SELECT toDoid, text FROM toDoList ORDER BY toDoid`, [], (err, rows) => {
+app.get('/api/todos', function(req, res) {
+
+db.all(`SELECT toDoid, text, date_text FROM generalToDo ORDER BY toDoid`, [], (err, rows) => {
   if (err){
     res.send(err);
     throw err;
@@ -99,11 +107,10 @@ db.all(`SELECT toDoid, text FROM toDoList ORDER BY toDoid`, [], (err, rows) => {
     app.post('/api/todos', function(req, res) {
 
             let newToDo = req.body.text;
-            db.run(`INSERT INTO toDoList(text) VALUES('${newToDo}')`, function(err, data) {
+            db.run(`INSERT INTO generalToDo(text, date_text) VALUES('${newToDo}', date('now', 'localtime'))`, function(err) {
               if (err) { return console.log("Could not add db entry: " + err.message)};
-              console.log(`A row has been inserted into toDoList with rowid ${this.lastID} and value ${newToDo}.`);
-              console.log(data);
-              db.all(`SELECT toDoid, text FROM toDoList ORDER BY toDoid`, [], (err, rows) => {
+              console.log(`A row has been inserted into generalToDo with rowid ${this.lastID} and values ${newToDo}.`);
+              db.all(`SELECT toDoid, text, date_text FROM generalToDo ORDER BY toDoid`, [], (err, rows) => {
                 if (err){
                   res.send(err);
                   throw err;
@@ -119,10 +126,10 @@ db.all(`SELECT toDoid, text FROM toDoList ORDER BY toDoid`, [], (err, rows) => {
     // delete a todo
     app.delete('/api/todos/:todo_id', function(req, res) {
 
-        db.run(`DELETE FROM toDoList WHERE toDoid = ${req.params.todo_id}`, function(err) {
+        db.run(`DELETE FROM generalToDo WHERE toDoid = ${req.params.todo_id}`, function(err) {
           if (err) { return console.log("Could not remove db entry: " + err.message)};
-          console.log(`A row has been removed from toDoList with rowid ${this.lastID}.`);
-          db.all(`SELECT toDoid, text FROM toDoList ORDER BY toDoid`, [], (err, rows) => {
+          console.log(`A row has been removed from generalToDo with rowid ${this.lastID}.`);
+          db.all(`SELECT toDoid, text, date_text FROM generalToDo ORDER BY toDoid`, [], (err, rows) => {
               if (err){
                 res.send(err);
                 throw err;
@@ -136,9 +143,9 @@ db.all(`SELECT toDoid, text FROM toDoList ORDER BY toDoid`, [], (err, rows) => {
 
     app.delete('/api/todos/all', function(req, res) {
 
-        db.run(`DELETE FROM toDoList WHERE *`, function(err) {
+        db.run(`DELETE FROM generalToDo WHERE *`, function(err) {
           if (err) { return console.log("Could not remove db entry: " + err.message)};
-          console.log(`A row has been removed from toDoList with rowid ${this.lastID}.`);
+          console.log(`A row has been removed from generalToDo with rowid ${this.lastID}.`);
         });
 
     });

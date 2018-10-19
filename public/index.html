@@ -34,18 +34,18 @@
         <div class="row">
 
         <ul class="col nav nav-pills nav-justified" style="display: inline-block;">
-          <li class="active"><a data-toggle="pill" ng-href="#{{tables[0].tableName}}">{{tables[0].tableName}} <span class="label label-info">{{tables[0].toDo.length}}</span></a></li>
-          <li ng-repeat="table in tables.slice(1,tables.length)"><a data-toggle="pill" ng-href="#{{table.tableName}}">{{table.tableName}}   <span class="label label-info">{{table.toDo.length}}</span></a></li>
-          <li class="disabled" ng-click="createTable()"><a href="#menu3">+</a></li>
+          <!--<li class="active"><a data-toggle="pill" ng-href="#{{tables[0].name}}">{{tables[0].name}} <span class="label label-info">{{tables[0].toDo.length}}</span></a></li>-->
+          <li ng-repeat="table in tables"><a data-toggle="pill" ng-href="#{{table.name}}" ng-click="selectTable($index)">{{table.name}}   <span class="label label-info">{{table.toDo.length}}</span></a></li>
+          <li class="disabled" ng-click="createTable()"><a href="">+</a></li>
 
         </ul>
         <div class="tab-content">
-          <div id="{{tables[0].tableName}}" class="tab-pane fade in active">
-            <h3>{{tables[0].tableName}}</h3>
+          <div id="{{tables[0].name}}" class="tab-pane fade in active">
+            <h3>{{tables[0].name}}</h3>
             <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
           </div>
-          <div id="{{table.tableName}}" class="tab-pane fade" ng-repeat="table in tables.slice(1,tables.length)">
-            <h3>{{table.tableName}}</h3>
+          <div id="{{table.name}}" class="tab-pane fade" ng-repeat="table in tables.slice(1,tables.length)">
+            <h3>{{table.name}}</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
         </div>
       </div>
@@ -57,7 +57,7 @@
                 <th>Date Added</th>
                 <th>Days Left</th>
                 <th>Delete?</th>
-                <tr ng-repeat="todo in todos">
+                <tr ng-repeat="todo in tables[tableToDisplay].toDo">
                   <td><input type="checkbox"/></td>
                   <td>{{todo.text}}</td>
                   <td>{{todo.date_text}}</td>

@@ -8,3 +8,4 @@ resources/AMI ID.txt
 public/database/toDo.db
 public/database/toDo.db
 public/database/toDo.db
+*.db

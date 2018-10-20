@@ -20,7 +20,8 @@
 
 
 
-let db_all;
+let db_all = [];
+let counter = 0;
 let db = new sqlite3.Database('./public/database/toDo.db', (err) => {
 
   if (err) {
@@ -29,6 +30,46 @@ let db = new sqlite3.Database('./public/database/toDo.db', (err) => {
 
   console.log('Connected to the toDo SQlite database.');
 });
+
+let getTableData = function(sendRequest, req, res) {
+  db_all = [];
+  counter = 0;
+  //SELECT name FROM sqlite_master WHERE type = "table"
+  db.each("SELECT name FROM sqlite_master WHERE type='table'", function (err, table) {
+    if (err) {
+      console.log(err);
+    }
+    db_all.push(table);
+  // Execute the callback function and pass the parameters to it
+}, function(err, count) {
+  let dbTableList = [];
+  db_all.forEach(function(table, index, array) {
+    db_all[index].toDo = [];
+    dbTableList.push(table.name);
+      db.all(`SELECT toDoid, text, date_text FROM ${table.name} ORDER BY toDoid`, [], (err, rows) => {
+        if (err){
+          throw err;
+        }
+        counter++;
+
+        db_all[index].toDo = rows;
+        if(counter === array.length && sendRequest) {
+          res.json(db_all);
+          console.log(db_all);
+        };
+        //console.log(index);
+        //console.log(rows);
+
+        //for (let row = 0; row < rows.length; row++) {
+        //}
+
+        //};
+
+      });
+  });
+  console.log("Existing Table List:- "+dbTableList.join(", "));
+});
+}
 
 db.serialize(() => {
 db.run(`CREATE TABLE if not exists General (
@@ -42,115 +83,41 @@ db.run(`CREATE TABLE if not exists General (
 });
 
 
-let getTableData = function(options, callBack) {
-  let db_all = [];
-  //SELECT name FROM sqlite_master WHERE type = "table"
-  db.each("SELECT name FROM sqlite_master WHERE type='table'", function (err, table) {
-    if (err) {
-      console.log(err);
-    }
-    db_all.push(table);
-  // Execute the callback function and pass the parameters to it
-}, function(err, count) {
-  console.log("count: "+count);
-  let dbTableList = [];
-  db_all.forEach(function(table, index, array) {
-    db_all[index].toDo = [];
-    dbTableList.push(table.name);
-      db.all(`SELECT toDoid, text, date_text FROM ${table.name} ORDER BY toDoid`, [], (err, rows) => {
-        if (err){
-          throw err;
-        }
-          console.log(rows[row]);
-        counter++;
-
-        db_all[index].toDo = rows;
-
-        if(counter === array.length) {
-          console.log(db_all);
-        };
-        //console.log(index);
-        //console.log(rows);
-
-        //for (let row = 0; row < rows.length; row++) {
-        //}
-
-        //};
-
-      });
-  });
-  console.log("Existing Table List:- "+dbTableList.join(", "));
-});
-};
-
-getTableData();
+getTableData(false);
 
 // routes ======================================================================
 
     // api ---------------------------------------------------------------------
     // get all todos
 
-app.post('/api/create', function(req, res) {
-  console.log(req.body.tableName)
-  let newTable = req.body.tableName;
-  db.run(`CREATE TABLE if not exists ${newTable} (
-    toDoid integer PRIMARY KEY,
-    text TEXT NOT NULL,
-    date_text TEXT NOT NULL
-    )`,
-    function(err) {
-      if (err) { return console.log("Incorrect Creation: "+err) };
-      console.log(`Created table with name ${newTable}`);
-      res.send(`${newTable}`);
-    });
-});
+app.post('/api/create/:table_name', function(req, res) {
+  if (req.params.table_name != "undefined") {
 
-let counter = 0;
-
-app.get('/api/todos', function(req, res) {
-  let db_all = [];
-  counter = 0;
-  //SELECT name FROM sqlite_master WHERE type = "table"
-  db.each("SELECT name FROM sqlite_master WHERE type='table'", function (err, table) {
-    if (err) {
-      console.log(err);
-    }
-    db_all.push(table);
-  // Execute the callback function and pass the parameters to it
-}, function(err, count) {
-  console.log("count: "+count);
-  let dbTableList = [];
-  db_all.forEach(function(table, index, array) {
-    db_all[index].toDo = [];
-    dbTableList.push(table.name);
-      db.all(`SELECT toDoid, text, date_text FROM ${table.name} ORDER BY toDoid`, [], (err, rows) => {
-        if (err){
-          throw err;
-        }
-        counter++;
-
-        db_all[index].toDo = rows;
-
-        if(counter === array.length) {
-          console.log(db_all);
-          res.send(db_all);
-        };
-        //console.log(index);
-        //console.log(rows);
-
-        //for (let row = 0; row < rows.length; row++) {
-        //}
-
-        //};
-
+    db.run(`CREATE TABLE if not exists ${req.params.table_name} (
+      toDoid integer PRIMARY KEY,
+      text TEXT NOT NULL,
+      date_text TEXT NOT NULL
+      )`,
+      function(err) {
+        if (err) { return console.log("Incorrect Creation: "+err) };
+        console.log(`Created table with name ${req.params.table_name}`);
+        getTableData(true, req, res);
       });
-  });
-  console.log("Existing Table List:- "+dbTableList.join(", "));
+  } else {
+    console.log("Error: Could not create 'undefined' table.")
+  }
 });
+
+//Request db Data, usually on page load
+app.get('/api/todos', function(req, res) {
+getTableData(true, req, res);
 });
+
+
     // create todo and send back all todos after creation
     app.post('/api/todos/:table_id', function(req, res) {
       let table_id;
+      console.log(db_all);
             if (req.params.table_id != 'undefined') {
               table_id = db_all[req.params.table_id].name;
             } else {
@@ -163,43 +130,34 @@ app.get('/api/todos', function(req, res) {
             db.run(`INSERT INTO ${table_id}(text, date_text) VALUES('${newToDo}', date('now', 'localtime'))`, function(err) {
               if (err) { return console.log("Could not add db entry: " + err.message)};
               console.log(`A row has been inserted into ${table_id} with rowid ${this.lastID} and values ${newToDo}.`);
-              db.all(`SELECT toDoid, text, date_text FROM ${table_id} ORDER BY toDoid`, [], (err, rows) => {
-                if (err){
-                  res.send(err);
-                  throw err;
-                }
-                res.json(rows);
-              });
+              getTableData(true, req, res);
             });
         });
 
 
 
     // delete a todo
-    app.delete('/api/todos/:todo_id', function(req, res) {
-
-        db.run(`DELETE FROM General WHERE toDoid = ${req.params.todo_id}`, function(err) {
+    app.delete('/api/todos/:table_id/:todo_id', function(req, res) {
+        console.log(req.params.table_id);
+        db.run(`DELETE FROM ${db_all[req.params.table_id].name} WHERE toDoid = ${req.params.todo_id}`, function(err) {
           if (err) { return console.log("Could not remove db entry: " + err.message)};
-          console.log(`A row has been removed from General with rowid ${this.lastID}.`);
-          db.all(`SELECT toDoid, text, date_text FROM General ORDER BY toDoid`, [], (err, rows) => {
-              if (err){
-                res.send(err);
-                throw err;
-              }
-              console.log(rows);
-              res.json(rows);
-            });
+          console.log(`A row has been removed from ${db_all[req.params.table_id].name} with rowid ${req.params.todo_id}.`);
+          getTableData(true, req, res);
         });
 
     });
 
-    app.delete('/api/todos/all', function(req, res) {
-
-        db.run(`DELETE FROM General WHERE *`, function(err) {
+    //delete a table
+    app.delete('/api/tables/:table_id', function(req, res) {
+      if (req.params.table_id != "General") {
+          db.run(`DROP TABLE IF EXISTS ${req.params.table_id};`, function(err) {
           if (err) { return console.log("Could not remove db entry: " + err.message)};
-          console.log(`A row has been removed from General with rowid ${this.lastID}.`);
+          console.log(`Deleted Table: ${req.params.table_id}}.`);
+          getTableData(true, req, res);
         });
-
+      } else {
+        console.log("Error: Cannot delete General!");
+      }
     });
 
 
@@ -211,4 +169,4 @@ app.get('/api/todos', function(req, res) {
 
     // listen (start app with node server.js) ======================================
     app.listen(80);
-    console.log("App listening on port 8080");
+    console.log("App listening on port 80");

@@ -10,36 +10,50 @@
     <link rel="icon" type="image/png" href="/images/favicon.ico"/>
 
     <title>To Do App</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <!-- SCROLLS -->
+
+    <!-- premade style -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"><!-- load fontawesome -->
+
+    <!-- written style -->
     <link rel="stylesheet/less" type="text/css" href="./css/index.less"><!-- less stylesheet -->
-    <!-- SPELLS -->
+
+    <!-- premade Js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> <!-- Bootstrap Javascript -->
     <script src="./js/less.min.js"></script><!-- load less -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> <!-- Bootstrap Javascript -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script><!-- load jquery -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
+
+    <!-- written Js -->
     <script src="core.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-121612593-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-121612593-1');
+    </script>
 
 </head>
 <!-- SET THE CONTROLLER AND GET ALL TODOS -->
 <body ng-controller="mainController">
+  <header class="row"><a href="http://jack-gooding.com">Jack-Gooding.com</a></header>
     <div class="container">
-
         <!-- HEADER AND TODO COUNT -->
         <div class="row jumbotron text-center" style="margin: 0 -15px 0 -15px;">
-            <h1>To do: <span class="label label-info">{{ todos.length }}</span></h1>
+            <h1>To do: <span class="label label-info">{{ tables[0].toDo.length + tables[1].toDo.length + tables[2].toDo.length + tables[3].toDo.length + tables[4].toDo.length }}</span></h1>
         </div>
         <div class="row">
 
-        <ul class="col nav nav-pills nav-justified" style="display: inline-block;">
+        <ul class="col nav nav-pills nav-justified" id="tableList" style="display: inline-block;">
           <!--<li class="active"><a data-toggle="pill" ng-href="#{{tables[0].name}}">{{tables[0].name}} <span class="label label-info">{{tables[0].toDo.length}}</span></a></li>-->
-          <li ng-repeat="table in tables"><a data-toggle="pill" ng-href="#{{table.name}}" ng-click="selectTable($index)">{{table.name}}   <span class="label label-info">{{table.toDo.length}}</span></a></li>
-          <li class="disabled" ng-click="createTable()"><a href="">+</a></li>
+          <li ng-repeat="table in tables" id="Table_{{table.name}}"><a class="" data-toggle="pill" ng-href="#{{table.name}}" ng-click="selectTable($index)">{{table.name}}   <span class="label label-info">{{table.toDo.length}}</span></a></li>
+
 
         </ul>
-        <div class="tab-content">
+      <!--  <div class="tab-content">
           <div id="{{tables[0].name}}" class="tab-pane fade in active">
             <h3>{{tables[0].name}}</h3>
             <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
@@ -48,7 +62,7 @@
             <h3>{{table.name}}</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
         </div>
-      </div>
+      </div>-->
         <div id="todo-table" class="row">
             <div class="col-sm-4 col-sm-offset-4">
               <table>
@@ -80,11 +94,12 @@
 
                     <!-- createToDo() WILL CREATE NEW TODOS -->
                     <button type="submit" class="btn btn-primary btn-lg" ng-click="createTodo()">Add</button>
+                    <button type="submit" class="btn btn-success btn-lg" ng-click="createTable()">New Table</button>
+                    <button type="submit" class="btn btn-warning btn-lg" ng-click="deleteTable()">Delete Table</button>
+
                 </form>
             </div>
         </div>
-        <footer style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);">Jack-Gooding.com</footer>
     </div>
-
 </body>
 </html>

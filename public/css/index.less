@@ -1,5 +1,5 @@
 html                    { overflow-y:scroll; }
-body                    { padding-top:50px; }
+body                    { padding-top:50px; position: relative;}
 #todo-table              { margin-bottom:30px; }
 
 .fa-trash-alt {
@@ -19,4 +19,30 @@ ul.nav-pills {
   li {
   }
 
+}
+
+footer {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+header {
+  position: absolute;
+  top: 10px;
+  left: 10%;
+}
+
+
+#todo-table {
+  th {
+    padding-left: 5px;
+    padding-right: 5px;
+    min-width: 40px;
+  }
+
+  td {
+    
+  }
 }

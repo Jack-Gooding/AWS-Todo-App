@@ -12,19 +12,27 @@
     <title>To Do App</title>
 
     <!-- premade style -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"><!-- load fontawesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"><!-- load fontawesome -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <!-- written style -->
     <link rel="stylesheet/less" type="text/css" href="./css/index.less"><!-- less stylesheet -->
 
-    <!-- premade Js -->
+    <!-- premade js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> <!-- Bootstrap Javascript -->
     <script src="./js/less.min.js"></script><!-- load less -->
+    <script
+			  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+			  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+			  crossorigin="anonymous"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
 
-    <!-- written Js -->
+    <!-- written js -->
     <script src="core.js"></script>
+    <!-- written js modules -->
+    <script src="./js/modules/dateConverter.js" type="module"></script>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-121612593-1"></script>
@@ -66,17 +74,19 @@
         <div id="todo-table" class="row">
             <div class="col-sm-4 col-sm-offset-4">
               <table>
-                <th>Completed?</th>
+                <th>Done?</th>
                 <th>Todo</th>
                 <th>Date Added</th>
+                <th>Date Due</th>
                 <th>Days Left</th>
                 <th>Delete?</th>
                 <tr ng-repeat="todo in tables[tableToDisplay].toDo">
-                  <td><input type="checkbox"/></td>
-                  <td>{{todo.text}}</td>
-                  <td>{{todo.date_text}}</td>
-                  <td>{{todo.date_needed}}</td>
-                  <td><i class="fas fa-trash-alt" ng-click="deleteTodo(todo.toDoid)"></i></td>
+                  <td id="todo-done"><input type="checkbox"/></td>
+                  <td id="todo-text">{{todo.text}}</td>
+                  <td id="todo-date">{{todo.date_added}}</td>
+                  <td id="todo-date-due">{{todo.date_due}}</td>
+                  <td id="todo-days-left">{{todo.days_left}}</td>
+                  <td id="todo-delete"><i class="fas fa-trash-alt" ng-click="deleteTodo(todo.toDoid)"></i></td>
                 </tr>
               </table>
             </div>
@@ -86,12 +96,11 @@
         <div id="todo-form" class="row">
             <div class="col-sm-8 col-sm-offset-2 text-center">
                 <form>
-                    <div class="form-group">
-
+                    <div class="form-group row">
                         <!-- BIND THIS VALUE TO formData.text IN ANGULAR -->
-                        <input type="text" class="form-control input-lg text-center" placeholder="What needs to be done?" ng-model="formData.text">
+                        <input type="text" class="form-control input-lg text-center formdata-text" placeholder="What needs to be done?" ng-model="formData.text">
+                        <input type="text" class="form-control input-lg text-center" placeholder="By when?" datepicker ng-model="formData.date_due">
                     </div>
-
                     <!-- createToDo() WILL CREATE NEW TODOS -->
                     <button type="submit" class="btn btn-primary btn-lg" ng-click="createTodo()">Add</button>
                     <button type="submit" class="btn btn-success btn-lg" ng-click="createTable()">New Table</button>

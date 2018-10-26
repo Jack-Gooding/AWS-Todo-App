@@ -46,7 +46,7 @@ let getTableData = function(sendRequest, req, res) {
   db_all.forEach(function(table, index, array) {
     db_all[index].toDo = [];
     dbTableList.push(table.name);
-      db.all(`SELECT toDoid, text, date_text FROM ${table.name} ORDER BY toDoid`, [], (err, rows) => {
+      db.all(`SELECT toDoid, text, date_added, date_due FROM ${table.name} ORDER BY toDoid`, [], (err, rows) => {
         if (err){
           throw err;
         }
@@ -75,14 +75,16 @@ db.serialize(() => {
 db.run(`CREATE TABLE if not exists General (
   toDoid integer PRIMARY KEY,
   text TEXT NOT NULL,
-  date_text TEXT NOT NULL
+  date_added TEXT NOT NULL,
+  date_due TEXT
   )`,
   function(err) {
     if (err) { return console.log("Incorrect Creation: "+err) };
   });
 });
 
-
+//Get data from toDo.db
+//'false' flag stops res.send failure
 getTableData(false);
 
 // routes ======================================================================
@@ -96,7 +98,8 @@ app.post('/api/create/:table_name', function(req, res) {
     db.run(`CREATE TABLE if not exists ${req.params.table_name} (
       toDoid integer PRIMARY KEY,
       text TEXT NOT NULL,
-      date_text TEXT NOT NULL
+      date_added TEXT NOT NULL,
+      date_due TEXT
       )`,
       function(err) {
         if (err) { return console.log("Incorrect Creation: "+err) };
@@ -126,8 +129,15 @@ getTableData(true, req, res);
             }
 
             let newToDo = req.body.text;
+            let newDueDate = "--";
+            if (typeof(req.body.date_due) == "undefined") {
+              newDueDate = "--";
+            } else {
+              newDueDate = req.body.date_due;
+            };
+            console.log(req.body.date_due);
 
-            db.run(`INSERT INTO ${table_id}(text, date_text) VALUES('${newToDo}', date('now', 'localtime'))`, function(err) {
+            db.run(`INSERT INTO ${table_id}(text, date_added, date_due) VALUES('${newToDo}', date('now', 'localtime'), '${newDueDate}')`, function(err) {
               if (err) { return console.log("Could not add db entry: " + err.message)};
               console.log(`A row has been inserted into ${table_id} with rowid ${this.lastID} and values ${newToDo}.`);
               getTableData(true, req, res);
@@ -163,7 +173,7 @@ getTableData(true, req, res);
 
     // application -------------------------------------------------------------
     app.get('*', function(req, res) {
-        res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+        res.sendFile('public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
     });
 
 

@@ -36,6 +36,9 @@ header {
 
 
 #todo-table {
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
   th {
     padding-left: 5px;
     padding-right: 5px;
@@ -43,6 +46,21 @@ header {
   }
 
   td {
-    
+  padding: 0 5px;
+  }
+  #todo-delete {
+  }
+}
+.form-group {
+  width: 100%;
+}
+.input-group {
+  width: 100%;
+}
+.form-control {
+  display: inline;
+  width: 65%;
+  &:last-of-type {
+    width: 30%;
   }
 }

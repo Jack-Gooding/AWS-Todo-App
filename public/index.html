@@ -72,7 +72,7 @@
         </div>
       </div>-->
         <div id="todo-table" class="row">
-            <div class="col-sm-4 col-sm-offset-4">
+            <div class="">
               <table>
                 <th>Done?</th>
                 <th>Todo</th>
@@ -86,7 +86,7 @@
                   <td id="todo-date">{{todo.date_added}}</td>
                   <td id="todo-date-due">{{todo.date_due}}</td>
                   <td id="todo-days-left">{{todo.days_left}}</td>
-                  <td id="todo-delete"><i class="fas fa-trash-alt" ng-click="deleteTodo(todo.toDoid)"></i></td>
+                  <td id="todo-delete" ng-click="deleteTodo(todo.toDoid)"><i class="fas fa-trash-alt"></i></td>
                 </tr>
               </table>
             </div>
@@ -98,14 +98,17 @@
                 <form>
                     <div class="form-group row">
                         <!-- BIND THIS VALUE TO formData.text IN ANGULAR -->
-                        <input type="text" class="form-control input-lg text-center formdata-text" placeholder="What needs to be done?" ng-model="formData.text">
-                        <input type="text" class="form-control input-lg text-center" placeholder="By when?" datepicker ng-model="formData.date_due">
+                          <input type="text" class="form-control input-lg text-center formdata-text" placeholder="What needs to be done?" ng-model="formData.text">
+                          <input type="text" class="form-control input-lg text-center" placeholder="By when?" datepicker ng-model="formData.date_due">
                     </div>
                     <!-- createToDo() WILL CREATE NEW TODOS -->
-                    <button type="submit" class="btn btn-primary btn-lg" ng-click="createTodo()">Add</button>
-                    <button type="submit" class="btn btn-success btn-lg" ng-click="createTable()">New Table</button>
-                    <button type="submit" class="btn btn-warning btn-lg" ng-click="deleteTable()">Delete Table</button>
+                    <div class="table-buttons">
 
+                      <button type="submit" class="btn btn-primary btn-lg" ng-click="createTodo()">Add</button>
+                      <button type="submit" class="btn btn-success btn-lg" ng-click="createTable()">New Table</button>
+                      <button type="submit" class="btn btn-warning btn-lg" ng-click="deleteTable()">Delete Table</button>
+
+                    </div>
                 </form>
             </div>
         </div>

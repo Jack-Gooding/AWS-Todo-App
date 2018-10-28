@@ -84,6 +84,7 @@ function mainController($scope, $http) {
 
     $scope.calcDays = function() {
       $scope.tables.forEach(function(tables, i) {
+        $scope.tables[i].name = $scope.tables[i].name.split("_").join(" ");
         $scope.tables[i].toDo.forEach(function(task, j) {
           if($scope.tables[i].toDo[j].date_due != "--") {
             $scope.tables[i].toDo[j].days_left = differenceInDays($scope.tables[i].toDo[j].date_added, $scope.tables[i].toDo[j].date_due);
@@ -135,6 +136,7 @@ $scope.createTodo = function() {
     })
     .error(function(data) {
           console.log('POST error: ' + data);
+          alert(err);
     });
   } else {
     $(".formdata-text").css("box-shadow", "0 0 5px 2px yellow");
@@ -184,7 +186,7 @@ $scope.deleteTodo = function(id) {
 //Send DELETE request, uses current selected table
 $scope.deleteTable = function() {
     if (confirm(`Do you want to delete table:  ${$scope.tables[$scope.tableToDisplay].name}?`)) {
-    $http.delete('/api/tables/'+ $scope.tables[$scope.tableToDisplay].name)
+    $http.delete('/api/tables/'+ $scope.tableToDisplay)
         .success(function(data) {
           console.log('delete: '+data);
             $scope.tables = data;

@@ -92,6 +92,7 @@ getTableData(false);
     // api ---------------------------------------------------------------------
     // get all todos
 
+//Creates table
 app.post('/api/create/:table_name', function(req, res) {
   if (req.params.table_name != "undefined") {
 
@@ -102,12 +103,17 @@ app.post('/api/create/:table_name', function(req, res) {
       date_due TEXT
       )`,
       function(err) {
-        if (err) { return console.log("Incorrect Creation: "+err) };
+        if (err) {
+          res.send(err);
+          return console.log("Incorrect Creation: "+err)
+         };
         console.log(`Created table with name ${req.params.table_name}`);
         getTableData(true, req, res);
       });
   } else {
-    console.log("Error: Could not create 'undefined' table.")
+    let errorMsg = "Error: Could not create 'undefined' table.";
+    console.log(errorMsg);
+    res.send(errorMsg);
   }
 });
 
@@ -159,8 +165,8 @@ getTableData(true, req, res);
 
     //delete a table
     app.delete('/api/tables/:table_id', function(req, res) {
-      if (req.params.table_id != "General") {
-          db.run(`DROP TABLE IF EXISTS ${req.params.table_id};`, function(err) {
+      if (req.params.table_id != 0) {
+          db.run(`DROP TABLE IF EXISTS ${db_all[req.params.table_id].name};`, function(err) {
           if (err) { return console.log("Could not remove db entry: " + err.message)};
           console.log(`Deleted Table: ${req.params.table_id}}.`);
           getTableData(true, req, res);
@@ -173,7 +179,7 @@ getTableData(true, req, res);
 
     // application -------------------------------------------------------------
     app.get('*', function(req, res) {
-        res.sendFile('public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+        res.sendFile(__dirname + '/public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
     });
 
 

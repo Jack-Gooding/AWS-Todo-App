@@ -1,35 +1,7 @@
 html                    { overflow-y:scroll; }
 body                    { padding-top:50px; position: relative;}
-#todo-table              { margin-bottom:30px; }
 
-#todo-delete {
-  color: grey;
-  &:hover i {
-  transform: scale(1.5);
-  transition: 0.05s;
-  color: darken(grey, 20%);
-  &:hover {
-  }
-  &:active {
-    transform: scale(1.2);
-    color: darken(grey,10%);
-  }
-}
-}
-
-ul.nav-pills {
-  li {
-  }
-
-}
-
-footer {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
+.row {margin-top: 5px; margin-bottom: 5px;}
 header {
   position: absolute;
   top: 10px;
@@ -37,31 +9,73 @@ header {
 }
 
 
-#todo-table {
+#table-container {
   text-align: center;
-  overflow: hidden;
-  white-space: nowrap;
   min-height: 200px;
   position: relative;
-  div {
-    text-align: center;
-    position: absolute;
-    margin: auto;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  th {
-    padding-left: 5px;
-    padding-right: 5px;
-    min-width: 40px;
+  display: block;
+  margin-bottom: 30px;
+
+  table {
+    border-radius: 6px;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
   }
 
-  td {
-  padding: 0 5px;
+      th {
+        &:first-of-type {  border-radius: 6px 0 0 0; } //adds rounding to th edges
+        &:last-of-type { border-radius: 0 6px 0 0; }
+        background: #bce4f0;
+        min-width: 40px;
+        border-bottom: 1px solid rgb(204, 204, 204);
+        padding: 10px 15px;
+        text-align: center;
+        font-size: 1.2em;
+      }
+
+  tr {
+    &:nth-of-type(2n) {
+      td {
+        background: #d5e1ed;;
+      }
+    }
+    &:hover {
+      td {background: darken(#d5e1ed, 20%);}
+    }
+    &:last-of-type {
+      td {
+        border-bottom: solid 1px rgb(204, 204, 204);
+        &:first-of-type {border-radius: 0 0 0 6px;}
+        &:last-of-type {border-radius: 0 0 6px 0; border: solid 1px rgb(204, 204, 204); border-top: 0;}
+
+      }
+    }
+
+    td {
+      border-left:  solid 1px rgb(204, 204, 204);
+      &:last-of-type {
+        border-right:  solid 1px rgb(204, 204, 204);
+      }
+
+      padding: 6px 5px;
+    }
   }
-  #todo-text {
-  }
+
   #todo-delete {
+    cursor: pointer;
+    color: grey;
+    &:hover i {
+    transform: scale(1.5);
+    transition: 0.05s;
+    color: darken(grey, 20%);
+    &:hover {
+    }
+  }
+  &:active i {
+    transform: scale(1.2);
+    color: darken(grey,10%);
+  }
   }
 }
 
@@ -86,4 +100,8 @@ header {
 
 #ui-datepicker-div {
   transform+_: translateX(-50%);
+}
+
+input[type=checkbox] {
+  cursor: pointer;
 }

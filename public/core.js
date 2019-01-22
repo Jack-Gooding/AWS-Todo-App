@@ -86,10 +86,10 @@ function mainController($scope, $http) {
       $scope.tables.forEach(function(tables, i) {
         $scope.tables[i].name = $scope.tables[i].name.split("_").join(" ");
         $scope.tables[i].toDo.forEach(function(task, j) {
-          if($scope.tables[i].toDo[j].date_due != "--") {
+          if($scope.tables[i].toDo[j].date_due != "-") {
             $scope.tables[i].toDo[j].days_left = differenceInDays($scope.tables[i].toDo[j].date_added, $scope.tables[i].toDo[j].date_due);
           } else {
-            $scope.tables[i].toDo[j].days_left = "--";
+            $scope.tables[i].toDo[j].days_left = "-";
           }
         });
         //console.log($scope.tables[index].name);

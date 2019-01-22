@@ -135,9 +135,9 @@ getTableData(true, req, res);
             }
 
             let newToDo = req.body.text;
-            let newDueDate = "--";
+            let newDueDate = "-";
             if (typeof(req.body.date_due) == "undefined") {
-              newDueDate = "--";
+              newDueDate = "-";
             } else {
               newDueDate = req.body.date_due;
             };
@@ -184,5 +184,6 @@ getTableData(true, req, res);
 
 
     // listen (start app with node server.js) ======================================
-    app.listen(80);
-    console.log("App listening on port 80");
+    let serverPort = 80;
+    app.listen(serverPort);
+    console.log("App listening on port "+serverPort);

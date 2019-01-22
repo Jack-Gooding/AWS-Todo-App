@@ -54,12 +54,14 @@
             <h1>To do: <span class="label label-info">{{ tables[0].toDo.length + tables[1].toDo.length + tables[2].toDo.length + tables[3].toDo.length + tables[4].toDo.length }}</span></h1>
         </div>
         <div class="row">
-
         <ul class="col nav nav-pills nav-justified" id="tableList" style="display: inline-block;">
           <!--<li class="active"><a data-toggle="pill" ng-href="#{{tables[0].name}}">{{tables[0].name}} <span class="label label-info">{{tables[0].toDo.length}}</span></a></li>-->
-          <li ng-repeat="table in tables" id="Table_{{table.name}}"><a class="" data-toggle="pill" ng-href="#{{table.name}}" ng-click="selectTable($index)">{{table.name}}   <span class="label label-info">{{table.toDo.length}}</span></a></li>
-
-
+          <li ng-repeat="table in tables" id="Table_{{table.name}}">
+            <a class="" data-toggle="pill" ng-href="#{{table.name}}" ng-click="selectTable($index)">
+              {{table.name}}
+              <span class="label label-info">{{table.toDo.length}}</span>
+            </a>
+          </li>
         </ul>
       <!--  <div class="tab-content">
           <div id="{{tables[0].name}}" class="tab-pane fade in active">
@@ -71,26 +73,27 @@
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
         </div>
       </div>-->
-        <div id="todo-table" class="row">
-            <div class="">
-              <table>
-                <th>Done?</th>
-                <th>Todo</th>
-                <th>Date Added</th>
-                <th>Date Due</th>
-                <th>Days Left</th>
-                <th>Delete?</th>
-                <tr ng-repeat="todo in tables[tableToDisplay].toDo">
-                  <td id="todo-done"><input type="checkbox"/></td>
-                  <td id="todo-text">{{todo.text}}</td>
-                  <td id="todo-date">{{todo.date_added}}</td>
-                  <td id="todo-date-due">{{todo.date_due}}</td>
-                  <td id="todo-days-left">{{todo.days_left}}</td>
-                  <td id="todo-delete" ng-click="deleteTodo(todo.toDoid)"><i class="fas fa-trash-alt"></i></td>
-                </tr>
-              </table>
-            </div>
-        </div>
+      </div>
+      <div id="table-container" class="row">
+        <table class="table-responsive">
+            <tr>
+              <th>Done?</th>
+              <th>Todo</th>
+              <th>Date Added</th>
+              <th>Date Due</th>
+              <th>Days Left</th>
+              <th>Delete?</th>
+            </tr>
+            <tr ng-repeat="todo in tables[tableToDisplay].toDo">
+              <td id="todo-done"><div><input type="checkbox"/></div></td>
+              <td id="todo-text">{{todo.text}}</td>
+              <td id="todo-date">{{todo.date_added}}</td>
+              <td id="todo-date-due">{{todo.date_due}}</td>
+              <td id="todo-days-left">{{todo.days_left}}</td>
+              <td id="todo-delete" ng-click="deleteTodo(todo.toDoid)"><i class="fas fa-trash-alt"></i></td>
+            </tr>
+        </table>
+      </div>
 
         <!-- FORM TO CREATE TODOS -->
         <div id="todo-form" class="row">
@@ -113,5 +116,6 @@
             </div>
         </div>
     </div>
+
 </body>
 </html>
